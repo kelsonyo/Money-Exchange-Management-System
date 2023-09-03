@@ -7,6 +7,7 @@ public class Main {
 	private static final String USERNAME_PATTERN = "^[A-Za-z0-9]{6,}$";
 	private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
 	public static final String PHONE_NUMBER_PATTERN = "^(6|8|9)\\d{7}$";
+	private static int lastUserID = 0;
 
 	public static void main(String[] args) {
 
@@ -20,23 +21,24 @@ public class Main {
 
 	public static UserAccount inputUserAccount(ArrayList<UserAccount> UAList) {
 		UserAccount UA = null;
+		int userID = ++lastUserID;
 
-		String username = Helper.readStringRegEx("Enter Your Username > ", USERNAME_PATTERN);
-		String password = Helper.readStringRegEx("Enter your password > ", PASSWORD_PATTERN);
-		String contactInformation = Helper.readStringRegEx("Enter your Phone Number (SG) > ", PHONE_NUMBER_PATTERN);
+		String username = Helper.readStringRegEx("Enter Username > ", USERNAME_PATTERN);
+		String password = Helper.readStringRegEx("Enter Password > ", PASSWORD_PATTERN);
+		String contactInformation = Helper.readStringRegEx("Enter Phone Number (SG) > ", PHONE_NUMBER_PATTERN);
 
-		UA = new UserAccount(username, password, contactInformation);
+		UA = new UserAccount(userID, username, password, contactInformation);
 
 		return UA;
 	}
 
-	public static void addUserAccount(ArrayList<UserAccount> UAList, UserAccount UA) {
-		for (UserAccount ua : UAList) {
+	public static void addUserAccount(ArrayList<UserAccount> UAList, UserAccount ua) {
+		for (UserAccount UA : UAList) {
 			if (ua.getAccountID() == UA.getAccountID() || ua.getUsername() == UA.getUsername()) {
 				return;
 			}
 		}
-		UAList.add(UA);
+		UAList.add(ua);
 
 	}
 
@@ -44,7 +46,7 @@ public class Main {
 		String output = "";
 
 		for (UserAccount UA : UAList) {
-			output += String.format("%-90s\n", UA.toString());
+			output += String.format("%-73s\n", UA.toString());
 		}
 		return output;
 
@@ -54,8 +56,76 @@ public class Main {
 		String output = retrieveUserAccount(UAList);
 
 		setHeader("USER ACCOUNT LIST");
-		String header = String.format("%-15d %-20s %-20s $%-15s", "ACCOUNT ID", "PASSWORD", "CONTACT INFORMATION");
+		String header = String.format("%-15s %-20s %-20s %-15s\n", "USER ID", "ACCOUNT ID", "PASSWORD",
+				"CONTACT INFORMATION");
 		System.out.println(header + output);
+	}
+
+	public static boolean doUpdateUserAccount(ArrayList<UserAccount> UAList, int userToUpdateID, String newUsername,
+			String newPassword, String newContactInformation) {
+
+		for (UserAccount UA : UAList) {
+			if (UA.getAccountID() == userToUpdateID) {
+				if (!newUsername.isEmpty()) {
+					UA.setUsername(newUsername);
+				}
+				if (!newPassword.isEmpty()) {
+					UA.setPassword(newPassword);
+				}
+				if (!newContactInformation.isEmpty()) {
+					UA.setContactInformation(newContactInformation);
+				}
+				return true;
+
+			}
+		}
+		return false;
+
+	}
+
+	public static void updateUserAccount(ArrayList<UserAccount> UAList) {
+		Main.viewUserAccount(UAList);
+
+		int userToUpdateID = Helper.readInt("Enter User ID to Update > ");
+		String newUsername = Helper.readString("Enter New Username (Press Enter to keep current) > ");
+		String newPassword = Helper.readString("Enter New Password (Press Enter to keep current) > ");
+		String newContactInformation = Helper
+				.readString("Enter New Contact Information (Press Enter to keep current) > ");
+
+		boolean updated = doUpdateUserAccount(UAList, userToUpdateID, newUsername, newPassword, newContactInformation);
+
+		if (updated == false) {
+			System.out.println("Invalid User ID");
+		} else {
+			System.out.println("User" + userToUpdateID + "Updated");
+		}
+
+	}
+
+	public static boolean doDeleteUserAccount(ArrayList<UserAccount> UAList, int userToDeleteID) {
+		for (UserAccount UA : UAList) {
+			if (UA.getAccountID() == userToDeleteID) {
+				UAList.remove(userToDeleteID);
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+	public static void deleteUserAccount(ArrayList<UserAccount> UAList) {
+		Main.viewUserAccount(UAList);
+
+		int userToDeleteID = Helper.readInt("Enter User ID to Delete > ");
+
+		boolean deleted = doDeleteUserAccount(UAList, userToDeleteID);
+
+		if (deleted == false) {
+			System.out.println("Invalid User ID");
+		} else {
+			System.out.println("User" + userToDeleteID + "Deleted");
+		}
+
 	}
 
 }
