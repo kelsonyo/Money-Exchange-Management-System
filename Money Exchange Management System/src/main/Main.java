@@ -1,12 +1,15 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Currency;
 
 public class Main {
 
 	private static final String USERNAME_PATTERN = "^[A-Za-z0-9]{6,}$";
 	private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
-	public static final String PHONE_NUMBER_PATTERN = "^(6|8|9)\\d{7}$";
+	private static final String PHONE_NUMBER_PATTERN = "^(6|8|9)\\d{7}$";
+	private static final String NOT_EMPTY = ".+";
+
 	private static int lastUserID = 0;
 
 	public static void main(String[] args) {
@@ -18,6 +21,8 @@ public class Main {
 		System.out.println(header);
 		Helper.line(100, "-");
 	}
+
+	// ================================= Accounts =================================
 
 	public static UserAccount inputUserAccount(ArrayList<UserAccount> UAList) {
 		UserAccount UA = null;
@@ -86,13 +91,15 @@ public class Main {
 	public static void updateUserAccount(ArrayList<UserAccount> UAList) {
 		Main.viewUserAccount(UAList);
 
-		int userToUpdateID = Helper.readInt("Enter User ID to Update > ");
+		String userToUpdateID = Helper.readStringRegEx("Enter User ID to Update > ", NOT_EMPTY);
 		String newUsername = Helper.readString("Enter New Username (Press Enter to keep current) > ");
 		String newPassword = Helper.readString("Enter New Password (Press Enter to keep current) > ");
 		String newContactInformation = Helper
 				.readString("Enter New Contact Information (Press Enter to keep current) > ");
 
-		boolean updated = doUpdateUserAccount(UAList, userToUpdateID, newUsername, newPassword, newContactInformation);
+		int usertoUpdateIDInt = Integer.parseInt(userToUpdateID);
+		boolean updated = doUpdateUserAccount(UAList, usertoUpdateIDInt, newUsername, newPassword,
+				newContactInformation);
 
 		if (updated == false) {
 			System.out.println("Invalid User ID");
@@ -126,6 +133,33 @@ public class Main {
 			System.out.println("User" + userToDeleteID + "Deleted");
 		}
 
+	}
+
+	// ================================= Currency =================================
+
+	public static CurrencyMEMS inputCurrency(ArrayList<CurrencyMEMS> CList) {
+		CurrencyMEMS CA = null;
+
+		String currencyCode = Helper.readStringRegEx("Enter Currency Code (ISO 4217) > ", NOT_EMPTY);
+		String currencyName = Currency.getInstance(currencyCode).getDisplayName();
+
+		CA = new CurrencyMEMS(currencyCode, currencyName);
+
+		return CA;
+	}
+
+	public static void addCurrency(ArrayList<CurrencyMEMS> CList, CurrencyMEMS ca) {
+
+		if (ca.getCurrencyCode() == null || ca.getCurrencyCode().isEmpty()) {
+			return;
+		}
+
+		for (CurrencyMEMS CA : CList) {
+			if (ca.getCurrencyCode().equals(CA.getCurrencyCode())) {
+				return;
+			}
+		}
+		CList.add(ca);
 	}
 
 }
