@@ -148,9 +148,18 @@ public class Main {
 		return CA;
 	}
 
+	public static boolean isValidCurrencyCode(String currencyCode) {
+		try {
+			Currency.getInstance(currencyCode);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
 	public static void addCurrency(ArrayList<CurrencyMEMS> CList, CurrencyMEMS ca) {
 
-		if (ca.getCurrencyCode() == null || ca.getCurrencyCode().isEmpty()) {
+		if (ca.getCurrencyCode() == null || !isValidCurrencyCode(ca.getCurrencyCode())) {
 			return;
 		}
 

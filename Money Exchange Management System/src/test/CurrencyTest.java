@@ -50,7 +50,7 @@ public class CurrencyTest {
 		assertEquals("Test that the Currency arraylist size is unchange.", 2, CList.size());
 		
 		// Test Case 4
-		CurrencyMEMS cInvalidCode = new CurrencyMEMS("", "United States Dollar");
+		CurrencyMEMS cInvalidCode = new CurrencyMEMS("U", "United States Dollar");
 		Main.addCurrency(CList, cInvalidCode);
 		assertEquals("Test that the Currency arraylist size is unchange.", 2, CList.size());
 
@@ -60,7 +60,6 @@ public class CurrencyTest {
 		assertEquals("Test that the Currency arraylist size is unchange.", 2, CList.size());
 	}
 
-	
 
 	@After
 	public void tearDown() throws Exception {
